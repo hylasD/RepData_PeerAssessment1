@@ -8,7 +8,8 @@ output:
 
 ## Loading and preprocessing the data
 
-```{r,}
+
+```r
 library(tidyr)
 library(dplyr)
 library(ggplot2)
@@ -19,30 +20,27 @@ df <- tbl_df(read.csv("activity.csv"))
 
 ## What is mean total number of steps taken per day?
 
-```{r,}
+
+```r
 df.day <- df %>%
   group_by(date) %>%
   summarise(Day.Sum = sum(steps, na.rm=TRUE))
 ```
 
-```{r, echo=FALSE}
-histogram <- ggplot(df.day, aes(Day.Sum))+ 
-  geom_histogram(binwidth=5000, fill="limegreen")+
-  labs(title = "Histogram of total daily steps", y = "Frequency", x = "Bins of steps")+ 
-  theme_classic()
-histogram
-```
+![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3-1.png) 
 
-```{r,}
+
+```r
 df.day.summary <- df.day %>%
   summarise(Mean.total.steps=mean(Day.Sum, na.rm = TRUE), Median.total.steps=median(Day.Sum, na.rm = TRUE))
 ```
 
-Mean and median of the total number of steps taken per day are `r paste(round(df.day.summary[1,1],2), " & ", round(df.day.summary[1,2],2))`, respectively
+Mean and median of the total number of steps taken per day are 9354.23  &  10395, respectively
 
 ## What is the average daily activity pattern?
 
-```{r,}
+
+```r
 df.interval <- df %>%
   group_by(interval) %>%
   summarise(Interval.Average = mean(steps, na.rm = TRUE))
@@ -53,9 +51,12 @@ daily.ac <- ggplot(df.interval, aes(interval, Interval.Average))+
 daily.ac
 ```
 
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5-1.png) 
+
 ### Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
-```{r,}
+
+```r
 interval <- df.interval$interval[which.max(df.interval$Interval.Average)]
 ```
 
@@ -63,13 +64,15 @@ interval <- df.interval$interval[which.max(df.interval$Interval.Average)]
 
 ### Calculate and report the total number of missing values in the dataset
 
-```{r,}
+
+```r
 na <- length(subset(df$steps, is.na(df$steps)==TRUE))
 ```
 
 ### Create a new dataset that is equal to the original dataset but with the missing data filled in
 
-```{r,}
+
+```r
 df.interval <- df %>%
   group_by(interval) %>%
   summarise(Interval.Average = mean(steps, na.rm = TRUE))
@@ -91,7 +94,8 @@ df.new$steps <- na.values
 
 ### Make a histogram of the total number of steps taken each day 
 
-```{r,}
+
+```r
 df.day.n <- df.new %>%
   group_by(date) %>%
   summarise(Day.Sum = sum(steps))
@@ -105,9 +109,12 @@ hist2 <-ggplot(df.day.n, aes(Day.Sum))+
 hist2
 ```
 
+![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9-1.png) 
+
 ### Calculate and report the mean and median total number of steps taken per day. 
 
-```{r,}
+
+```r
 df.day.summary.n <- df.day.n %>%
   summarise(Mean.total.steps=mean(Day.Sum, na.rm = TRUE), Median.total.steps=median(Day.Sum, na.rm = TRUE))
 ```
@@ -116,11 +123,12 @@ Do these values differ from the estimates from the first part of the assignment?
 
 Yes they do
 
-Mean got increased. Mean and median now have the same values after filling NAs with mean values. New mean and mean are: `r paste(round(df.day.summary.n[1,1], 2), " & ",  round(df.day.summary.n[1,2],2))`, respectively.
+Mean got increased. Mean and median now have the same values after filling NAs with mean values. New mean and mean are: 10766.19  &  10766.19, respectively.
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
-```{r,}
+
+```r
 df.new$date <- ymd(df.new$date) 
 df.new <- mutate(df.new, Days=weekdays(date))
 df.new <- df.new %>% group_by(interval, Days) %>% summarise(Average=mean(steps))
@@ -144,5 +152,7 @@ labs(title = "Average activity pattern during weekdays and weekends", y = "Avera
 theme_classic()
 week.activity
 ```
+
+![plot of chunk unnamed-chunk-11](figure/unnamed-chunk-11-1.png) 
 
 There are differences in activity between weekdays and weekends.

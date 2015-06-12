@@ -25,7 +25,7 @@ df.day <- df %>%
   summarise(Day.Sum = sum(steps, na.rm=TRUE))
 ```
 
-```{r, echo=FALSE}
+```{r, }
 histogram <- ggplot(df.day, aes(Day.Sum))+ 
   geom_histogram(binwidth=5000, fill="limegreen")+
   labs(title = "Histogram of total daily steps", y = "Frequency", x = "Bins of steps")+ 
